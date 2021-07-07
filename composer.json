@@ -2,6 +2,6 @@
     "name": "AJ-TechSoul/ELi-PHP-Framework",
     "description": "Eli PHP Framework is for Quick PHP Website Development",
     "require": {
-        "php": ">=7.2",        
+        "php": ">=7.2"
     }
 }
