@@ -1,0 +1,11 @@
+@import "eli-grid.css";
+@import "eli-helpers.css";
+@import "eli-color.css";
+@import "eli-forms.css";
+@import "eli-components.css";
+@import "elislider.css";
+@import "mdi/css/animate.css";
+@import "mdi/css/materialdesignicons.min.css";
+@import "swal/sweetalert2.min.css";
+
+/*@import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.13/dist/shoelace/shoelace.css";*/

@@ -1,0 +1,10 @@
+{
+	"name": "Template Manager",
+	"description": "",
+	"version": 0.1,
+	"icon":"app.templatemanager.png",
+	"author":"AJ",
+	"website":"https://techsoul.in",
+	"allowperm":"admin,superadmin",
+	"filter":"admin"
+}

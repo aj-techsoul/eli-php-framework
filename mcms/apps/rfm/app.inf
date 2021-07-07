@@ -1,0 +1,10 @@
+{
+	"name": "File Manager",
+	"description": "",
+	"version": 0.9,
+	"icon":"filemanager.png",
+	"author":"Responsive File Manager",
+	"website":"https://techsoul.in",
+	"allowperm":"doctor,admin,superadmin",
+	"filter":"doctor,admin"
+}

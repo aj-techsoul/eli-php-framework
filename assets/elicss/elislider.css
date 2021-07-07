@@ -1,0 +1,21 @@
+/* ------------------------------- slider Start----------------------------------------------  */
+.slider { display:grid; opacity:0;  }	
+.slider.initialised { opacity:1;  position:relative; display:grid; grid-template-columns:minmax(0,1fr); }
+.slider .slider-controls {   }		
+.slider .slider-track { scroll-behavior: smooth; display:grid; grid-auto-flow:column;  width:100%; overflow:hidden;  }
+.slider-track > div { cursor:pointer; opacity:.7;  }
+.slider-track > div.active { opacity:1; }
+
+.slider-track > div img { width:100%; height:100%; object-fit:cover; object-position: center;    }
+
+.slider .slider-controls .slider-prev,.slider .slider-controls .slider-next { opacity:0.1;  position:absolute; height:100%; top:0; width:7%; font-size:2em; background:transparent; border:none; outline:none; cursor: pointer; color:rgba(0,0,0,.4); text-shadow:0px 0px 10px rgba(255,255,255,.9);  transition:1s background ease-in-out; margin:0px; }
+.slider .slider-controls .slider-prev {  left:0; }
+.slider .slider-controls .slider-next {  right:0; }
+
+.slider:hover .slider-controls .slider-prev,.slider:hover .slider-controls .slider-next { opacity:1;  }
+
+
+.slider .slider-controls .slider-prev:hover {  background: linear-gradient(90deg, rgba(0,0,0,0.18109250536151966) 0%, rgba(255,255,255,0) 100%); }
+.slider .slider-controls .slider-next:hover {  background: linear-gradient(270deg, rgba(0,0,0,0.18109250536151966) 0%, rgba(255,255,255,0) 100%); }
+
+/* ------------------------------- slider End----------------------------------------------  */

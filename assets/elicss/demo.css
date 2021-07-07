@@ -1,0 +1,8 @@
+.g { margin:1em; grid-gap:.5em; }
+.g > span { border:1px solid red; background:red; color:white; }
+
+center { background:red; color:white; margin-top:2em; }
+
+.block-s,.block-m,.block-l,.block-full { border:1px solid red; }
+
+.block-s { display: none; }
