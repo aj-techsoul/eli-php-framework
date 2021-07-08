@@ -40,7 +40,7 @@ function getDBInfo($config="USER"){
     }
 }
 
-function connect_db($config='',$dbtype='mysql',$log='N')
+function connect_db($config='',$dbtype='mysql',$return=0)
 {
   $config = self::getDBInfo($config);
   if(isset($config) && is_array($config)){
@@ -75,15 +75,25 @@ switch ($dbtype)
         $conn = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
         // set the PDO error mode to exception
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        echo ($log=='Y' OR $log=='y')?"Connected successfully":"";
+        echo ($return)?"Connected successfully":"";
         return $conn;
         }
     catch(PDOException $e)
         {
-        echo "Connection failed: ";
-        echo $e->getMessage() . "<br/>";
-        file_put_contents('PDOErrors.txt',$e, FILE_APPEND);  // write some details to an error-log outside public_html
-        die();  //  terminate connection
+        if($return){
+            $ret = array();
+            $ret['success'] = false;
+            $ret['message'] = "Connection failed";
+
+            return $ret;
+        }
+        else
+        {
+            echo "Connection failed: ";
+            echo $e->getMessage() . "<br/>";
+            file_put_contents('PDOErrors.txt',$e, FILE_APPEND);  // write some details to an error-log outside public_html
+            die();  //  terminate connection
+        }
         }
     break;
 
@@ -95,10 +105,23 @@ switch ($dbtype)
 			return $conn;
         }
         catch (PDOException $err) {
+
+        if($return){
+            $ret = array();
+            $ret['success'] = false;
+            $ret['message'] = "Database Connection failed";
+
+            return $ret;
+        }
+        else
+        {
             echo "Database Connection failed.";
             echo $err->getMessage() . "<br/>";
             file_put_contents('PDOErrors.txt',$err, FILE_APPEND);  // write some details to an error-log outside public_html
             die();  //  terminate connection
+        }
+
+            
         }
     break;
 }

@@ -35,8 +35,14 @@
               $tbl = "users";
               $sql = "SELECT * FROM $tbl WHERE role LIKE '$username' AND password LIKE '$password'  OR email LIKE '$username' AND password LIKE '$password' ";
 
-              $usr =  $db->query($sql,'USER');
-              
+              $dbchk = $db->connect_db('',$GLOBALS['USER']['dbtype'],true);
+              if($dbchk['success']){                
+                $usr =  $db->query($sql,'USER');     
+              }
+              else
+              {
+                $usr = array();
+              }
               if(count($usr) > 0){
                 $susr = $usr[0];
                 unset($susr['password']);

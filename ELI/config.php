@@ -4,11 +4,11 @@
 //------------------------------------
 
 # USER DATABASE
-$GLOBALS['USER']['config']['dbtype'] = "sqlite"; // mysql,sqlite
+$GLOBALS['USER']['config']['dbtype'] = "mysql"; // mysql,sqlite
 $GLOBALS['USER']['config']['dbhost'] = "localhost"; // FOR SQLITE, Please mention SQLlite File Path
-$GLOBALS['USER']['config']['dbuser'] = "admin";
-$GLOBALS['USER']['config']['dbpass'] = "admin";
-$GLOBALS['USER']['config']['dbname'] = "db/cmsv3";// FOR SQLITE, Please mention SQLlite File Path
+$GLOBALS['USER']['config']['dbuser'] = "root";
+$GLOBALS['USER']['config']['dbpass'] = "";
+$GLOBALS['USER']['config']['dbname'] = "";// FOR SQLITE, Please mention SQLlite File Path
 
 # CMS Database
 $GLOBALS['CMS']['config']['dbtype'] = "sqlite"; // mysql,sqlite
@@ -32,22 +32,22 @@ $GLOBALS['cmspass'] = "superadmin777";
 
 
 # SMS INFORMATION
-$GLOBALS['sms']['url'] = "http://sms.360marketings.in/vendorsms/pushsms.aspx";
-$GLOBALS['sms']['user'] = "TECHSOUL";
-$GLOBALS['sms']['pass'] = "TechSou4567";
-$GLOBALS['sms']['sid'] = "TechSo";
+$GLOBALS['sms']['url'] = "***";
+$GLOBALS['sms']['user'] = "***";
+$GLOBALS['sms']['pass'] = "***";
+$GLOBALS['sms']['sid'] = "******";
 
 //------------------------------------
 //   SITE DETAILS
 //------------------------------------
-$GLOBALS['impMail'] = "techsoul4@gmail.com";
-$GLOBALS['site']['name'] = "MyCyberMD";
-$GLOBALS['site']['author'] = "AJ";
-$GLOBALS['shorturl'] = "";
+$GLOBALS['impMail'] = "dummy@app.techsoul.in";
+$GLOBALS['site']['name'] = "Site-Name";
+$GLOBALS['site']['author'] = "Your Name";
+$GLOBALS['shorturl'] = ""; //optional
 //------------------------------------
 
-$GLOBALS['config']['mailFROM'] = "techsoul4@gmail.com";
-$GLOBALS['officemail'] = "aj@techsoul.in";
+$GLOBALS['config']['mailFROM'] = "dummy@app.techsoul.in"; // mail username from where to send mail
+$GLOBALS['officemail'] = "dummy@app.techsoul.in"; // official email
 
 //------------------------------------
 // Facebook Login
@@ -71,5 +71,5 @@ date_default_timezone_set("Asia/Kolkata");
 $freepages = "REGISTER,LOGIN,SIGNUP,contact.php,partner.php,test.php";
 
 // IMPORTANT TO SET
-$websitepath = "ELIProductCMS/";
+$websitepath = "ELI-GROUP/ELi-PHP-Framework/";
  ?>

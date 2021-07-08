@@ -1,1 +1,0 @@
-<?php $tmp->inc('header'); ?>
