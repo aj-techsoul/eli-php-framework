@@ -175,6 +175,65 @@ switch ($postedpage)
         } 
     break;
 
+
+case "STATUS_UPDATE":
+      if(isset($_POST) && isset($page[2]) && $v->required(@$_POST['id'],"ID") && $v->required(@$_POST['status'],"Status") ){
+        $fd = $_POST;
+        //print_r($_POST);
+        $res = array();
+        if($fd['status'] >= 1){
+          // Make it zero
+          $fd['status'] = 0;
+          $res =  $db->update_row($page[2],$fd," id = $fd[id] ");          
+        }
+        else {
+          // Make it 1
+          $fd['status'] = 1;
+          $res =  $db->update_row($page[2],$fd," id = $fd[id] ");        
+        }
+
+            if($res['success']){
+                $res['status'] = $fd['status'];
+            }
+          else
+            {
+                $res['status'] = $_POST['status'];
+            }
+
+
+          if($res['success']){
+            echo json_encode($res);  
+          }
+          else
+          {
+              $res['message'] = "Unable to update";
+              echo json_encode($res);     
+          }
+          
+
+      }
+      else {
+        echo "Try Again";
+      }
+    break;
+
+    
+    case "delrow":
+        if(isset($_SESSION['user']['id']) && isset($page[2]) && isset($_POST['id']) &&  is_numeric($_POST['id']) && check_csrf($csrf_got))
+        {
+            $id = $_POST['id'];
+                       // DELETE
+                        $db = new DATABASE;
+                        $res = $db->delete_row($page[2],"id='$id' ");
+                       // echo $res['status'];
+                        echo $res['message'];
+        }
+        else
+        {
+            echo "Please make sure you are login!";
+        }
+    break;
+
     default:
         $purl = $page[1];
         $pageurl = VIEW . "$purl";
