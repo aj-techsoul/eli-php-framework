@@ -6,6 +6,7 @@ class API{
         return $defapikey;
     }
     
+
     function formatResult($result,$type="query"){
         $type1 = explode(",","insert,update,delete");
         if(in_array($type,$type1)){
@@ -22,7 +23,7 @@ class API{
         else
         {
             // default type
-            if(count($result) > 0){
+            if(is_array($result) && count($result) > 0){
                 $rsp['success'] = true;
                 $rsp['data'] = $result;
                 $rsp['length'] = count($result);
@@ -33,7 +34,7 @@ class API{
                 $rsp['success'] = false;
                 $rsp['data'] = @$result;
                 $rsp['message'] = "No Records Found";
-                $rsp['length'] = count($result);
+                $rsp['length'] = (is_array($result)) ? count(@$result) : 0;
                 return json_encode($rsp);
             }
         }

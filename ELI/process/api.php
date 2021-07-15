@@ -12,7 +12,7 @@ $enablelog = TRUE;
 $api = new API;
 
 // working on API Key
-$apikey_default = $api->getDefaultAPIKey();
+$apikey_default = (isset($_REQUEST['csrf']) && strlen($_REQUEST['csrf']) == 32) ? $_REQUEST['csrf'] : $api->getDefaultAPIKey();
 
 if(isset($_REQUEST['apikey']) && strlen(@$_REQUEST['apikey']) == 32){
   // check for same server use
@@ -34,14 +34,20 @@ else
   }
   }
 }
+elseif(check_csrf($apikey_default)){
+  // same origin // csrf check
+  $validkey = true;
+}
 else
 {
   $err['error'] = "No API Key Provided";
+  $err['success'] = false;
   die(json_encode($err));
 }
 
 if(!$validkey){
   $err['error'] = "API key is not valid";
+  $err['success'] = false;
   die(json_encode($err));
 }
 //------------------
@@ -188,6 +194,7 @@ break;
               $tblexists = $db->tableExists($tbl); 
               if(!$tblexists){
                 $err['message'] = "Table not Found!";
+                $err['success'] = false;
                 die(json_encode($err));
               }
 
@@ -208,6 +215,7 @@ break;
             }
             else
             {
+              $err['success'] = false;
               $err['error'] = "Invalid API CALL LEVEL 1";
               die(json_encode($err));
             }

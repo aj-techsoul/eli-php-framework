@@ -154,6 +154,98 @@ function tableExists($table,$config="") {
 }
 
 
+function createtable($tbl,$colsettings,$config="",$return=false){
+//Example: $cols = "id:int:ai:pk,name:150:!null,username:200:null";
+
+// Make Columns Query
+if(isset($colsettings)){
+    $cols = explode(",",$colsettings);
+    if(count($cols)>0){
+        foreach($cols as $col){
+            $st = explode(":",$col);
+            if(isset($st[1]) && is_numeric($st[1])){
+                $cnf = "VARCHAR(".$st[1].") ";
+            }
+            elseif(isset($st[1]) && strlen($st[1]) > 1)
+            {
+                $cnf = strtoupper($st[1]);                
+            }
+            else
+            {
+                $cnf = " VARCHAR( 255 ) ";    
+            }
+            // Not Null 
+            if(in_array("!null",$st)){
+                $cnf .= " NOT NULL ";
+            }
+            // Null 
+            if(in_array("null",$st)){
+                $cnf .= " NULL ";
+            }
+            // Auto increment
+            if(in_array("ai",$st)){
+                $cnf .= " AUTO_INCREMENT ";
+            }
+            // Primary Key
+            if(in_array("pk",$st)){
+                $cnf .= " PRIMARY KEY ";
+            }
+            // Primary Key
+            if(in_array("unique",$st)){
+                $cnf .= ", ADD UNIQUE (`$col`) ";
+            }
+
+            $colmn[] = @$st[0]." ".$cnf;
+        }  
+        if(isset($colmn) && is_array($colmn)){
+            $colset = implode(",",$colmn);
+        }
+        else
+        {
+            $colset = "";   
+        }
+    }
+
+//
+$table = $tbl;
+try {
+     $conn = self::connect_db($config);
+
+     $sql ="CREATE table $table($colset);";
+     $conn->exec($sql);
+     if($return){
+        $ret['success'] = true;
+        $ret['message'] = "Created $table Table Successfully\n";
+     }
+     else
+     {
+           echo "Created $table Table Successfully\n";
+     }
+
+  
+
+} catch(PDOException $e) {
+    if($return){
+    $ret['success'] = false;
+    $ret['message'] = $e->getMessage(); //Remove or change message in production code
+    }
+    else
+    {
+        echo $e->getMessage();
+    }
+}   
+
+   return ($return) ? @$ret : "";
+
+}
+else
+{
+    die("Kindly mention the columns names");
+}
+
+}
+
+
 // INSERT ROW
 function insert_row($table_name, $form_data,$config="")
 {

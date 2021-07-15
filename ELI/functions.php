@@ -42,8 +42,9 @@ foreach($classes as $c)
         if (!isset($_SESSION['token']))
         {
             $token = md5(date('Y-m-d-H-i').uniqid(rand(), TRUE));
-            $_SESSION['token'] = $token;
+            $_SESSION['token'] = $token;            
         }
+        return @$_SESSION['token'];
     }
 
 	function check_csrf($csrf_got)
