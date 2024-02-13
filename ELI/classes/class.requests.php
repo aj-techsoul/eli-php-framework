@@ -2,8 +2,14 @@
 
 class REQUEST {
 
-	function csrftoken(){
-		echo @$_SESSION['token'];
+	function csrftoken($return=false){
+		if($return){
+			return @$_SESSION['token'];
+		}
+		else
+		{
+			echo @$_SESSION['token'];
+		}
 	}
 
 	function is_loggedin($data=false){
@@ -163,7 +169,8 @@ class REQUEST {
 		}
 	}
 
-	function addrow($tbl,$formdata,$required="",$unique=false,$successmsg="Successfully added data",$failmsg="Unable to add data",$duplicatemsg="Duplicate record found"){
+	function addrow($tbl,$formdata,$required="",$unique=false,$successmsg="Successfully added data",$failmsg="Unable to add data",$duplicatemsg="Duplicate record found",$sqlquery="",$return=true){
+
 		$v = new VALIDATOR;
 		$db = new DATABASE;
 		
@@ -176,7 +183,7 @@ class REQUEST {
 
 		$where = "";
 
-		if(count($unique) > 0){
+		if(is_array($unique) && count($unique) > 0){
 			foreach($unique as $u){
 				switch(gettype(@$formdata[$u])){
 					case "integer":
@@ -187,36 +194,74 @@ class REQUEST {
 					break;
 				}
 			}
+			if(isset($fd) && is_array($fd) && count($fd) > 0){
 			$where = implode(" AND ",$fd);
+				$where = " WHERE ".$where;
+			}
 		}
-
-		
-		$chk = $db->query("SELECT * FROM $tbl WHERE $where ");
+		$sql = "SELECT * FROM $tbl $where "; 
+		$chk = $db->query($sql);
 
 		if(count($chk)>0){
 			// Data Exist
-			echo $duplicatemsg;
+			if($return){
+				$ret = array();
+				$ret['success'] = false;
+				$ret['result'] = $duplicatemsg;
+				$ret['data'] = array();
+				return json_encode($ret);
+			}
+			else
+			{
+				return $duplicatemsg;
+			}
 		}
 		else
 		{
 			$res = $db->insert_row($tbl,$formdata);
 			if($res['success']){
-				echo $successmsg;
+				if($return){
+					$iid = @$res['id'];
+					if(strlen($sqlquery) > 0 ){ $sqlquery = str_replace("{{id}}",$iid,$sqlquery); }
+					$dta = (strlen($sqlquery) > 0) ? $db->query($sqlquery) : $db->query("SELECT *,
+					CASE WHEN status > 0 THEN 'active' ELSE 'inactive' END AS status_text 
+					FROM $tbl WHERE id='$iid' ");
+					$ret = array();
+					$ret['success'] = $res['success'];
+					$ret['result'] = $successmsg;
+					$ret['data'] = @$dta[0];
+					return json_encode($ret);
+				}
+				else
+				{
+					return $successmsg;
+				}
 			}
 			else
 			{
-				echo $failmsg;
+				if($return){
+					$ret = array();
+					$ret['success'] = $res['success'];
+					$ret['result'] = $failmsg;
+					$ret['data'] = array();
+					return json_encode($ret);
+				}
+				else
+				{
+					return $failmsg;
+				}
+				
 			}
 		}
 		}
 		else
 		{
-			echo "please fill data properly";
+			return "please fill data properly";
 		}
 
 	}
 
-	function updaterow($tbl,$formdata,$required="",$unique=false,$successmsg="Successfully updated data",$failmsg="Unable to update data",$nodatamsg="Sorry, Record doesn't exist"){
+	function updaterow($tbl,$formdata,$required="",$unique=false,$successmsg="Successfully updated data",$failmsg="Unable to update data",$nodatamsg="Sorry, Record doesn't exist",$sqlquery="",$return=true){
 		$v = new VALIDATOR;
 		$db = new DATABASE;
 		
@@ -252,22 +297,45 @@ class REQUEST {
 			$where .= (isset($where) && strlen($where)>0) ? " AND id='$id' ":"";
 			$res = $db->update_row($tbl,$formdata,$where);
 			if($res['success']){
-				echo $successmsg;
+				if($return){
+					if(strlen($sqlquery) > 0 ){ $sqlquery = str_replace("{{id}}",$id,$sqlquery); }
+					$dta = (strlen($sqlquery) > 0) ? $db->query($sqlquery) : $db->query("SELECT *,CASE WHEN status > 0 THEN 'active' ELSE 'inactive' END AS status_text  FROM $tbl WHERE id='$id' ");
+					$ret = array();
+					$ret['success'] = $res['success'];
+					$ret['result'] = $successmsg;
+					$ret['data'] = @$dta[0];
+					return json_encode($ret);
+				}
+				else
+				{
+					echo $successmsg;
+				}
 			}
 			else
 			{
-				echo $failmsg;
+				if($return){
+					$dta = (strlen($sqlquery)  > 0) ? $db->query($sqlquery) : $db->query("SELECT *,CASE WHEN status > 0 THEN 'active' ELSE 'inactive' END AS status_text  FROM $tbl WHERE id='$id' ");
+					$ret = array();
+					$ret['success'] = $res['success'];
+					$ret['result'] = $failmsg;
+					$ret['data'] = @$dta[0];
+					return json_encode($ret);
+				}
+				else
+				{
+					return $failmsg;
+				}
 			}
 		}
 		else
 		{
 			// Data not exists
-			echo $nodatamsg;
+			return $nodatamsg;
 		}
 		}
 		else
 		{
-			echo "please fill data properly";
+			return "please fill data properly";
 		}
 
 	}

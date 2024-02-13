@@ -67,7 +67,13 @@ function getDataURI($image, $mime = '') {
     // 
     //  <option value="{{id}}" >{{name}}</option>
     // 
-    function replace($template,$data_array,$return=true){
+    function replace($template,$data_array,$templateadd=false,$return=true){
+        if($templateadd){
+            if(strpos($template,"<tr") !== false){
+                echo str_replace("<tr","<tr template=''",$template);
+            }
+        }
+
         if(count($data_array) > 0){
             foreach ($data_array as $key => $value) {
                 $template = str_ireplace("{{".$key."}}",$value,$template);
@@ -82,7 +88,14 @@ function getDataURI($image, $mime = '') {
         }
     }
 
-    function viewer($data_array,$template,$return=false){
+    function viewer($data_array,$template,$templateadd=true,$return=false){
+        // var_dump(strpos($template,"<tr"));
+        // die();
+        if($templateadd){
+            if(strpos($template,"<tr") !== false){
+                echo str_replace("<tr","<tr template=''",$template);
+            }
+        }
         if(count($data_array)>0){
             $output = "";
             foreach ($data_array as $data) {

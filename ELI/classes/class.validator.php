@@ -30,20 +30,20 @@ CLASS VALIDATOR
   function phone($phone,$json='n')
   {
     $phone = trim($phone);
-
-    if(isset($phone) && strlen($phone)>=10 && preg_match("/^[+]?[1-9][0-9]{9,14}$/", $phone))
+    $maxnum = 10;
+    if(isset($phone) && strlen($phone)>=$maxnum && preg_match("/^[+]?[0-9][0-9]{9,14}$/", $phone))
     {
       return TRUE;
     }   
     else {
        if(strtolower($json)=='y'){
         $j['status'] = "fail";
-        $j['message'] = 'Invalid Number, Your Phone Number should be 10 digits!<br />';
+        $j['message'] = 'Invalid Number, Your Phone Number should be '.$maxnum.' digits!<br />';
         echo json_encode($j);
         die();
       }else
       {
-      die('Invalid Number, Your Phone Number should be of 10 digits!<br />');
+      die('Invalid Number, Your Phone Number should be of '.$maxnum.' digits!<br />');
       }
       return false;
     }

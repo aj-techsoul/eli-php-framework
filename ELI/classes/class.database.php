@@ -471,5 +471,153 @@ catch (Exception $err) {
 }
 
 
+function import_csv_to_sqlite($csv_path,$table,$options = array(),$config='')
+{
+
+try {
+    $conn = self::connect_db($config);
+    extract($options);
+
+    if (($csv_handle = fopen($csv_path, "r")) === FALSE)
+        throw new Exception('Cannot open CSV file');
+
+    if(!isset($delimiter)){
+        @$delimiter = ',';
+    }
+
+    if(!isset($table)){
+        $table = preg_replace("/[^A-Z0-9]/i", '', basename($csv_path));
+    }
+
+    if(!isset($fields)){
+        $fields = array_map(function ($field){
+            return strtolower(preg_replace("/[^A-Z0-9]/i", '', $field));
+        }, fgetcsv($csv_handle, 0, $delimiter));
+    }
+
+    $create_fields_str = join(', ', array_map(function ($field){
+        return "$field TEXT NULL";
+    }, $fields));
+
+    // Create Table
+    // $create_table_sql = "CREATE TABLE IF NOT EXISTS $table ($create_fields_str)";
+    // echo $create_table_sql;
+    // die();
+    // $pdo->exec($create_table_sql);
+
+    
+    $insert_fields_str = join(', ', $fields);
+    $insert_values_str = join(', ', array_fill(1, count($fields),  '?'));
+    // $insert_sql = "INSERT INTO $table ($insert_fields_str) VALUES ($insert_values_str)";
+    // $insert_sth = $conn->prepare($insert_sql);
+    // print_r($fields);
+    // die();
+    $inserted_rows = 0;
+    $updated_rows = 0;
+    $not_touched = 0;
+    $errr = 0;
+    $error = array();
+    $error['total'] = $errr;
+    $digreport = array();
+
+    while (($data = fgetcsv($csv_handle, 0, $delimiter)) !== FALSE) {
+        $chk = self::query("SELECT * FROM $table WHERE id='$data[0]' ");
+        if(count($chk) > 0){
+            // update
+            for ($i=0; $i < count($data); $i++) { 
+                if(isset($data[$i]) && strlen(trim($data[$i])) > 0) {
+                    $upfd[$fields[$i]] = $data[$i];
+                }
+            }
+            if(isset($upfd['id'])){
+                $upd = self::update_row($table,$upfd," id='$upfd[id]' ");
+                if($upd['success']){
+                    $updated_rows++;
+                }
+                else
+                {
+                    $not_touched++;
+                }
+            }
+            else
+            {
+                $not_touched++;
+            }
+        }
+        else
+        {
+            // check rectify
+            if(@$fields[0] == 'id' && !is_numeric(@$data[0])){
+                unset($data[0]);
+            }
+
+            if(count($data) > 0){
+                
+                // insert
+                for ($i=0; $i < count($data); $i++) {
+                    if(isset($data[$i]) && strlen(trim($data[$i])) > 0) {
+                        $infd[$fields[$i]] = $data[$i];
+                    }
+                }
+                if(isset($infd['id'])){
+                    unset($infd['id']);                
+                }
+
+                $ins = self::insert_row($table,$infd);
+                if($ins['success']){
+                    $inserted_rows++;
+                }
+                else
+                {
+                    $error['total'] = $errr++;
+                    $error['message'] = @$ins['message'];
+                }
+                
+            }
+        }
+
+    }
+
+    fclose($csv_handle);
+
+    return array(
+            'table' => $table,
+            'fields' => $fields,
+            'inserted_rows' => $inserted_rows,
+            'updated_rows' => $updated_rows,
+            'error_rows' => $error,
+            'not_touched' => $not_touched
+        );
+
+}
+catch (PDOException $err) {
+    // echo "Database Connection failed.";
+    echo $err->getMessage() . "<br/>";
+    file_put_contents('PDOErrors.txt',$err, FILE_APPEND);  // write some details to an error-log outside public_html
+    die();  //  terminate connection
+}
+
+}
+
+
+function truncate($tableName, $config='') {
+    try {
+        $conn = self::connect_db($config);
+        $stmt = $conn->prepare("DELETE FROM $tableName");
+        $stmt->execute();
+        $stmt = $conn->prepare("VACUUM");
+        $stmt->execute();
+        $stmt = $conn->prepare("UPDATE sqlite_sequence SET seq = 0 WHERE name = :table_name");
+        $stmt->bindValue(':table_name', $tableName);
+        $stmt->execute();
+        self::disconnect_db($conn);
+    } catch(PDOException $e) {
+        self::formatError($e);
+    }
+}
+
+
+
+
 }
 ?>
