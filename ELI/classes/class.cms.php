@@ -5,7 +5,7 @@
      */
     class CMS
     {
-        function login($password,$username="",$csrf){
+        function login($password,$username="",$csrf=""){
 
           if(!isset($GLOBALS['cmspass'])){
             $GLOBALS['cmspass'] = "Super777";
