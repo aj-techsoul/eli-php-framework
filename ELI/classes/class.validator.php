@@ -241,7 +241,7 @@ CLASS VALIDATOR
         }
   }
 
-function message($minlength=10,$posteddata,$name="Message"){
+function message($minlength=10,$posteddata="",$name="Message"){
   if(strlen($posteddata) >= $minlength){
     return true;
   }
