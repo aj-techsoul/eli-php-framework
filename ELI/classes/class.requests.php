@@ -339,6 +339,82 @@ class REQUEST {
 		}
 
 	}
+
+
+	// decoderesult
+	function decoderesult($resultjson,$decode=false){
+		if($decode){
+			$res = json_decode($resultjson,true);
+			$ret = (isset($res['data'])) ? @$res['data'] : $res ;
+		}
+		else
+		{
+			$res = json_encode($resultjson);
+			$ret = $res;
+		}
+		return $ret;
+	}
+
+	// File Upload Optimised way
+	function savePicture($posteddata,$destinationdir,$id=""){
+		$saved = 0;
+		$idata = $posteddata;
+            $imgdatas = json_decode("[".$posteddata."]",true);
+
+// ------------
+
+                $dirfolder = $destinationdir;
+                if(count($imgdatas) > 1){
+                	$dir = "$dirfolder/".$id."/";
+                }
+                else
+                {
+                	$dir = "$dirfolder/";
+                }
+                // Creating Main Folder
+                if(!file_exists($dirfolder)){
+                    mkdir($dirfolder,0777);
+                }
+                // Creating id folder
+                if(!file_exists($dir)){
+                    mkdir($dir,0777);
+                }
+                if(count($imgdatas) > 0){
+                    $i = 0;
+                    foreach($imgdatas as $imgdata){
+                        $i++;
+                        $ext2 = explode("/",$imgdata['type']);
+                        $ext = end($ext2);
+                        if(count($imgdatas) == 1){
+                        	$file = $id.".".$ext;
+                        }
+                        else
+                        {
+                        	$file = $i.".".$ext;
+                        }
+                        
+                        // multiple images
+                        $imgData = str_replace(' ','+',$imgdata['data']);
+                        $imgData =  substr($imgData,strpos($imgData,",")+1);
+                        $imgData = base64_decode($imgData,true);
+                        // Path where the image is going to be saved
+                        $filePath = $dir.$file;
+                        // Write $imgData into the image file
+                        $file2 = fopen($filePath, 'w');
+                        fwrite($file2, $imgData);
+                        fclose($file2);
+                        if($i == 1){
+                            $pfile = $file;
+                        }
+                        if(file_exists($filePath)){
+                        	$saved++;
+                        }
+                    }
+                }
+
+                return $saved;
+	}
+
 }
 
 ?>
