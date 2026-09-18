@@ -1,3 +1,26 @@
+<IfModule mod_headers.c>
+
+    # ==============================
+    # SECURITY HEADERS
+    # ==============================
+
+    # Force HTTPS
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    # Prevent MIME sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Prevent clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Referrer protection
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Disable unnecessary browser features
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+</IfModule>
+
 RewriteEngine On
 
 #RewriteCond %{HTTPS} off
